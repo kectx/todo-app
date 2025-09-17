@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use("/api/todos", todoRoutes);
 
-mongoose.connect(process.env.MONGO_URI, { dbName: "todo_app" })
+mongoose.connect(process.env.MONGO_URI as string)
   .then(() => {
     console.log("✅ MongoDB connected");
     app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
