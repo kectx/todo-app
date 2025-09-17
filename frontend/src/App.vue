@@ -1,10 +1,15 @@
+<script lang="ts" setup>
+import Footer from './components/Footer.vue'
+</script>
+
 <template>
   <div>
-    <main>
+    <main class="min-h-[calc(100vh-60px)]">
       <Transition name="fade" mode="out-in">
         <router-view />
       </Transition>
     </main>
+    <Footer />
   </div>
 </template>
 
