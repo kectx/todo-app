@@ -40,50 +40,52 @@ onMounted(fetchTodos)
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-[calc(100vh-0px)] bg-gray-50 dark:bg-slate-900 py-8"
-  >
-    <h1 class="text-2xl font-bold mb-4 text-center">Dodaj zadanie</h1>
+  <div class="flex min-h-screen flex-col bg-gray-50 dark:bg-slate-900">
+    <header class="py-6 text-center">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+    </header>
 
-    <div class="flex gap-2 mb-6 rounded-xl shadow">
-      <input
-        v-model="newTodo"
-        type="text"
-        placeholder="New task"
-        @keyup.enter="addTodo"
-        class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <button @click="addTodo" class="text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-        Add
-      </button>
-    </div>
-
-    <ul class="space-y-3">
-      <li
-        v-for="todo in todos"
-        :key="todo._id"
-        class="flex items-center justify-between p-3 rounded shadow-sm"
-      >
-        <label class="flex items-center gap-3 cursor-pointer flex-1">
-          <input
-            type="checkbox"
-            :checked="todo.done"
-            @change="toggleTodo(todo)"
-            class="w-5 h-5 text-blue-500 rounded focus:ring-2 focus:ring-blue-400"
-          />
-          <span
-            :class="['transition-all duration-300', todo.done ? 'line-through text-gray-400' : '']"
+    <main class="flex items-start gap-6 px-8 py-4">
+      <aside class="w-1/3 rounded-xl bg-white p-4 shadow dark:bg-slate-800">
+        <h2 class="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Twoje zadania</h2>
+        <ul class="space-y-3">
+          <li
+            v-for="todo in todos"
+            :key="todo._id"
+            class="flex items-center justify-between rounded bg-gray-50 p-3 shadow-sm dark:bg-slate-700"
           >
-            {{ todo.text }}
-          </span>
-        </label>
-        <button
-          @click="deleteTodo(todo._id)"
-          class="text-red-500 hover:text-red-700 transition text-xl"
-        >
-          🗑
-        </button>
-      </li>
-    </ul>
+            <label class="flex flex-1 cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                :checked="todo.done"
+                @change="toggleTodo(todo)"
+                class="h-5 w-5 rounded text-blue-500 focus:ring-2 focus:ring-blue-400"
+              />
+              <span
+                :class="[
+                  'transition-all duration-300',
+                  todo.done ? 'text-gray-400 line-through' : '',
+                ]"
+              >
+                {{ todo.text }}
+              </span>
+            </label>
+            <button
+              @click="deleteTodo(todo._id)"
+              class="text-xl text-red-500 transition hover:text-red-700"
+            >
+              🗑
+            </button>
+          </li>
+        </ul>
+      </aside>
+
+      <section class="min-h-[300px] flex-1 rounded-xl bg-white p-4 shadow dark:bg-slate-800">
+        <h2 class="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          Dodaj nowe zadanie
+        </h2>
+        <!-- formularz -->
+      </section>
+    </main>
   </div>
 </template>
