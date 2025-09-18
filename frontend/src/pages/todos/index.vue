@@ -48,7 +48,7 @@ onMounted(fetchTodos)
     <main class="flex items-start gap-6 px-8 py-4">
       <aside class="w-1/3 rounded-xl bg-white p-4 shadow dark:bg-slate-800">
         <h2 class="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Twoje zadania</h2>
-        <ul class="space-y-3">
+        <ul class="space-y-3" v-if="todos.length > 0">
           <li
             v-for="todo in todos"
             :key="todo._id"
@@ -78,6 +78,9 @@ onMounted(fetchTodos)
             </button>
           </li>
         </ul>
+        <p v-else class="text-center text-gray-500 dark:text-gray-400">
+          Brak zadań do wyświetlenia.
+        </p>
       </aside>
 
       <section class="min-h-[300px] flex-1 rounded-xl bg-white p-4 shadow dark:bg-slate-800">

@@ -20,7 +20,12 @@ const goNext = () => {
         <span
           v-for="(letter, index) in letters"
           :key="index"
-          class="animate-erase inline-block"
+          :class="[
+            'animate-erase inline-block',
+            {
+              'ml-2': index === 4,
+            },
+          ]"
           :style="{ animationDelay: index * 0.1 + 's' }"
         >
           {{ letter }}
