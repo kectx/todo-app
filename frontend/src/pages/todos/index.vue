@@ -1,46 +1,63 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, computed } from 'vue'
 
 interface Todo {
   _id: string
   text: string
   done: boolean
+  dueDate: string
 }
+
+const today = new Date().toISOString().split('T')[0]
 
 const todos = ref<Todo[]>([
-  { _id: '1', text: 'Sample Task 1', done: false },
-  { _id: '2', text: 'Sample Task 2', done: true },
+  { _id: '1', text: 'Zadanie na dzisiaj', done: false, dueDate: today },
+  { _id: '2', text: 'Zadanie jutro', done: false, dueDate: '2025-09-19' },
+  { _id: '3', text: 'Ukończone zadanie', done: true, dueDate: today },
 ])
+
 const newTodo = ref('')
+const activeTab = ref<'today' | 'upcoming' | 'done'>('today')
 
-const fetchTodos = async () => {
-  const res = await axios.get('/api/todos')
-  todos.value = Array.isArray(res.data) ? res.data : todos.value
-}
+const filteredTodos = computed(() => {
+  if (activeTab.value === 'today') {
+    return todos.value.filter((t) => t.dueDate === today && !t.done)
+  }
+  if (activeTab.value === 'upcoming') {
+    return todos.value.filter((t) => t.dueDate > today && !t.done)
+  }
+  if (activeTab.value === 'done') {
+    return todos.value.filter((t) => t.done)
+  }
+  return todos.value
+})
 
-const addTodo = async () => {
+const addTodo = () => {
   if (!newTodo.value.trim()) return
-  const res = await axios.post('/api/todos', { text: newTodo.value })
-  todos.value.push(res.data)
+  todos.value.push({
+    _id: Date.now().toString(),
+    text: newTodo.value,
+    done: false,
+    dueDate: today,
+  })
   newTodo.value = ''
 }
 
-const toggleTodo = async (todo: Todo) => {
-  const res = await axios.put(`/api/todos/${todo._id}`, { done: !todo.done })
-  todo.done = res.data.done
+const toggleTodo = (todo: Todo) => {
+  todo.done = !todo.done
 }
 
-const editTodo = async (id: string) => {
-  // implement edit logic here
-}
-
-const deleteTodo = async (id: string) => {
-  await axios.delete(`/api/todos/${id}`)
+const deleteTodo = (id: string) => {
   todos.value = todos.value.filter((t) => t._id !== id)
 }
 
-onMounted(fetchTodos)
+const editTodo = (id: string) => {
+  const todo = todos.value.find((t) => t._id === id)
+  if (todo) {
+    const newText = prompt('Edytuj zadanie:', todo.text)
+    if (newText) todo.text = newText
+  }
+}
 </script>
 
 <template>
@@ -162,9 +179,46 @@ onMounted(fetchTodos)
         </form>
       </header>
 
+      <!-- 🔥 zakładki -->
+      <div class="mb-6 flex gap-4 border-b border-gray-200 dark:border-gray-700">
+        <button
+          @click="activeTab = 'today'"
+          :class="[
+            'pb-2 text-sm font-medium',
+            activeTab === 'today'
+              ? 'border-primary text-primary border-b-2'
+              : 'hover:text-primary text-gray-500 dark:text-gray-400',
+          ]"
+        >
+          Dzisiaj
+        </button>
+        <button
+          @click="activeTab = 'upcoming'"
+          :class="[
+            'pb-2 text-sm font-medium',
+            activeTab === 'upcoming'
+              ? 'border-primary text-primary border-b-2'
+              : 'hover:text-primary text-gray-500 dark:text-gray-400',
+          ]"
+        >
+          Nadchodzące
+        </button>
+        <button
+          @click="activeTab = 'done'"
+          :class="[
+            'pb-2 text-sm font-medium',
+            activeTab === 'done'
+              ? 'border-primary text-primary border-b-2'
+              : 'hover:text-primary text-gray-500 dark:text-gray-400',
+          ]"
+        >
+          Ukończone
+        </button>
+      </div>
+
       <div class="space-y-4">
         <div
-          v-for="todo in todos"
+          v-for="todo in filteredTodos"
           :key="todo._id"
           class="dark:bg-primary-dark flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700"
         >
@@ -184,6 +238,7 @@ onMounted(fetchTodos)
               >
                 {{ todo.text }}
               </p>
+              <p class="text-xs text-gray-400">Termin: {{ todo.dueDate }}</p>
             </div>
           </div>
           <div class="flex gap-2">
