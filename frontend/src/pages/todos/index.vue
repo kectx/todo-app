@@ -36,17 +36,6 @@ const fetchTodos = async () => {
   todos.value = Array.isArray(res.data) ? res.data : todos.value
 }
 
-// const addTodo = () => {
-//   if (!newTodo.value.trim()) return
-//   todos.value.push({
-//     _id: Date.now().toString(),
-//     text: newTodo.value,
-//     done: false,
-//     dueDate: today,
-//   })
-//   newTodo.value = ''
-// }
-
 const addTodo = async () => {
   if (!newTodo.value.trim()) return
   const res = await axios.post('/api/todos', { text: newTodo.value, dueDate: today })
@@ -54,11 +43,12 @@ const addTodo = async () => {
   newTodo.value = ''
 }
 
-const toggleTodo = (todo: Todo) => {
-  todo.done = !todo.done
+const toggleTodo = async (todo: Todo) => {
+  const res = await axios.put(`/api/todos/${todo._id}`, { done: !todo.done })
+  todo.done = res.data.done
 }
-
-const deleteTodo = (id: string) => {
+const deleteTodo = async (id: string) => {
+  await axios.delete(`/api/todos/${id}`)
   todos.value = todos.value.filter((t) => t._id !== id)
 }
 
@@ -66,7 +56,11 @@ const editTodo = (id: string) => {
   const todo = todos.value.find((t) => t._id === id)
   if (todo) {
     const newText = prompt('Edytuj zadanie:', todo.text)
-    if (newText) todo.text = newText
+    if (newText !== null && newText.trim() !== '') {
+      axios.put(`/api/todos/${id}`, { text: newText.trim() }).then((res) => {
+        todo.text = res.data.text
+      })
+    }
   }
 }
 
