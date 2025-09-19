@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
 interface Todo {
   _id: string
@@ -10,21 +11,19 @@ interface Todo {
 
 const today = new Date().toISOString().split('T')[0]
 
-const todos = ref<Todo[]>([
-  { _id: '1', text: 'Zadanie na dzisiaj', done: false, dueDate: today },
-  { _id: '2', text: 'Zadanie jutro', done: false, dueDate: '2025-09-19' },
-  { _id: '3', text: 'Ukończone zadanie', done: true, dueDate: today },
-])
+const formatDate = (date: string | Date) => new Date(date).toISOString().split('T')[0]
+
+const todos = ref<Todo[]>([])
 
 const newTodo = ref('')
 const activeTab = ref<'today' | 'upcoming' | 'done'>('today')
 
 const filteredTodos = computed(() => {
   if (activeTab.value === 'today') {
-    return todos.value.filter((t) => t.dueDate === today && !t.done)
+    return todos.value.filter((t) => formatDate(t.dueDate) === today && !t.done)
   }
   if (activeTab.value === 'upcoming') {
-    return todos.value.filter((t) => t.dueDate > today && !t.done)
+    return todos.value.filter((t) => formatDate(t.dueDate) > today && !t.done)
   }
   if (activeTab.value === 'done') {
     return todos.value.filter((t) => t.done)
@@ -32,14 +31,26 @@ const filteredTodos = computed(() => {
   return todos.value
 })
 
-const addTodo = () => {
+const fetchTodos = async () => {
+  const res = await axios.get('/api/todos')
+  todos.value = Array.isArray(res.data) ? res.data : todos.value
+}
+
+// const addTodo = () => {
+//   if (!newTodo.value.trim()) return
+//   todos.value.push({
+//     _id: Date.now().toString(),
+//     text: newTodo.value,
+//     done: false,
+//     dueDate: today,
+//   })
+//   newTodo.value = ''
+// }
+
+const addTodo = async () => {
   if (!newTodo.value.trim()) return
-  todos.value.push({
-    _id: Date.now().toString(),
-    text: newTodo.value,
-    done: false,
-    dueDate: today,
-  })
+  const res = await axios.post('/api/todos', { text: newTodo.value, dueDate: today })
+  todos.value.push(res.data)
   newTodo.value = ''
 }
 
@@ -58,6 +69,10 @@ const editTodo = (id: string) => {
     if (newText) todo.text = newText
   }
 }
+
+onMounted(async () => {
+  await fetchTodos()
+})
 </script>
 
 <template>
