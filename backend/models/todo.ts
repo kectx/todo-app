@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const todoSchema = new mongoose.Schema({
   text: { type: String, required: true },
-  done: { type: Boolean, default: false }
+  done: { type: Boolean, default: false },
+  dueDate: {
+    type: Date,
+    required: false
+  }
 }, { timestamps: true });
 
 export default mongoose.model("Todo", todoSchema);
