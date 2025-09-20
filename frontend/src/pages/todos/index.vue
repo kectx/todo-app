@@ -281,9 +281,7 @@ onMounted(async () => {
               >
                 {{ todo.text }}
               </p>
-              <p class="text-xs text-gray-400">
-                Termin: {{ new Date(todo.dueDate).toISOString().split('T')[0] }}
-              </p>
+              <p class="text-xs text-gray-400">Termin: {{ formatDate(todo.dueDate) }}</p>
             </div>
           </div>
           <div class="flex gap-2">
