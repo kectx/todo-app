@@ -16,7 +16,11 @@ const formatDate = (date: string | Date) => new Date(date).toISOString().split('
 const todos = ref<Todo[]>([])
 
 const newTodo = ref('')
-const activeTab = ref<'today' | 'upcoming' | 'done'>('today')
+const activeTab = ref<'today' | 'upcoming' | 'done' | 'past'>('today')
+const editDialog = ref(false)
+const editText = ref('')
+const editId = ref<string>('')
+const editDate = ref<string>(today)
 
 const filteredTodos = computed(() => {
   if (activeTab.value === 'today') {
@@ -27,6 +31,9 @@ const filteredTodos = computed(() => {
   }
   if (activeTab.value === 'done') {
     return todos.value.filter((t) => t.done)
+  }
+  if (activeTab.value === 'past') {
+    return todos.value.filter((t) => formatDate(t.dueDate) < today && !t.done)
   }
   return todos.value
 })
@@ -55,13 +62,30 @@ const deleteTodo = async (id: string) => {
 const editTodo = (id: string) => {
   const todo = todos.value.find((t) => t._id === id)
   if (todo) {
-    const newText = prompt('Edytuj zadanie:', todo.text)
-    if (newText !== null && newText.trim() !== '') {
-      axios.put(`/api/todos/${id}`, { text: newText.trim() }).then((res) => {
-        todo.text = res.data.text
-      })
-    }
+    editId.value = todo._id
+    editText.value = todo.text
+    editDate.value = formatDate(todo.dueDate)
+    editDialog.value = true
   }
+}
+
+const saveEdit = async () => {
+  if (!editText.value.trim() || !editId.value) return
+  const res = await axios.put(`/api/todos/${editId.value}`, {
+    text: editText.value,
+    dueDate: editDate.value,
+  })
+
+  const todo = todos.value.find((t) => t._id === editId.value)
+  if (todo) {
+    todo.text = res.data.text
+    todo.dueDate = res.data.dueDate
+  }
+
+  editDialog.value = false
+  editText.value = ''
+  editDate.value = ''
+  editId.value = ''
 }
 
 onMounted(async () => {
@@ -188,7 +212,6 @@ onMounted(async () => {
         </form>
       </header>
 
-      <!-- 🔥 zakładki -->
       <div class="mb-6 flex gap-4 border-b border-gray-200 dark:border-gray-700">
         <button
           @click="activeTab = 'today'"
@@ -223,6 +246,17 @@ onMounted(async () => {
         >
           Ukończone
         </button>
+        <button
+          @click="activeTab = 'past'"
+          :class="[
+            'pb-2 text-sm font-medium',
+            activeTab === 'past'
+              ? 'border-primary text-primary border-b-2'
+              : 'hover:text-primary text-gray-500 dark:text-gray-400',
+          ]"
+        >
+          Przeszłe
+        </button>
       </div>
 
       <div class="space-y-4">
@@ -247,7 +281,9 @@ onMounted(async () => {
               >
                 {{ todo.text }}
               </p>
-              <p class="text-xs text-gray-400">Termin: {{ todo.dueDate }}</p>
+              <p class="text-xs text-gray-400">
+                Termin: {{ new Date(todo.dueDate).toISOString().split('T')[0] }}
+              </p>
             </div>
           </div>
           <div class="flex gap-2">
@@ -262,6 +298,42 @@ onMounted(async () => {
               class="rounded px-3 py-1 text-sm text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
             >
               Usuń
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="filteredTodos.length === 0"
+        class="mt-8 text-center text-gray-500 dark:text-gray-400"
+      >
+        Brak zadań do wyświetlenia.
+      </div>
+      <div v-if="editDialog" class="fixed inset-0 flex items-center justify-center bg-black/30">
+        <div class="w-96 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+          <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-white">Edytuj zadanie</h3>
+          <input
+            v-model="editText"
+            type="text"
+            class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          />
+          <input
+            v-model="editDate"
+            type="date"
+            :min="today"
+            class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          />
+          <div class="flex justify-end gap-2">
+            <button
+              @click="editDialog = false"
+              class="rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Anuluj
+            </button>
+            <button
+              @click="saveEdit"
+              class="bg-primary hover:bg-primary/90 rounded-lg px-4 py-2 text-white"
+            >
+              Zapisz
             </button>
           </div>
         </div>
