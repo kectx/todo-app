@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get("/", verifyToken, async (req, res) => {
   const uid = (req as any).user.uid;
-  console.log(`Fetching todos for user: ${uid}`);
   const todos = await Todo.find({ userId: uid });
   res.json(todos);
 });
