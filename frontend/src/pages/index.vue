@@ -3,10 +3,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const goNext = () => {
-  router.push('/todos')
-}
-
 const goToLogin = () => {
   router.push('/login')
 }
@@ -24,7 +20,7 @@ const goToLogin = () => {
         </p>
         <button
           class="bg-primary hover:bg-primary/90 mb-4 w-full animate-pulse rounded-lg px-6 py-3 font-bold text-white transition-colors duration-300 hover:animate-none"
-          @click="goNext"
+          @click="goToLogin"
         >
           Rozpocznij
         </button>
