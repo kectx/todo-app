@@ -5,9 +5,11 @@ import Footer from './components/Footer.vue'
 <template>
   <div>
     <main class="bg-primary-light dark:bg-primary-dark">
-      <Transition name="fade" mode="out-in">
-        <router-view class="min-h-[calc(100vh-60px)]" />
-      </Transition>
+      <router-view v-slot="{ Component }" class="min-h-[calc(100vh-60px)]">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
     <Footer />
   </div>
