@@ -2,15 +2,13 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAccountStore } from '../store/account'
-import { mapActions } from 'pinia'
 
 const router = useRouter()
 
 const email = ref('')
 const password = ref('')
-const error = ref('')
 
-const accountStore = mapActions(useAccountStore, ['login'])
+const accountStore = useAccountStore()
 
 const goToRegister = () => {
   router.push('/register')
@@ -74,7 +72,6 @@ const forgotPassword = () => {
           </button>
         </div>
       </form>
-      <p v-if="error" class="text-center text-sm text-red-500">{{ error }}</p>
 
       <div class="mt-8 text-center text-sm text-black/60 dark:text-white/60">
         Nie masz konta?
