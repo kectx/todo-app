@@ -1,6 +1,11 @@
 import express from "express";
-import User from "../models/user.ts";
+import { verifyToken } from "../middleware/auth.ts";
 
 const router = express.Router();
 
-export default router
+router.post("/sync", verifyToken, async (req, res) => {
+  const user = (req as any).user;
+  res.json({ message: "Sync success", uid: user.uid });
+});
+
+export default router;
