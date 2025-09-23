@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { signInWithEmailAndPassword } from 'firebase/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth } from '../firebase/auth'
-import axios from 'axios'
+import { useAccountStore } from '../store/account'
+import { mapActions } from 'pinia'
 
 const router = useRouter()
 
@@ -11,34 +10,14 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 
+const accountStore = mapActions(useAccountStore, ['login'])
+
 const goToRegister = () => {
   router.push('/register')
 }
 
 const forgotPassword = () => {
   // Implement forgot password logic here
-}
-
-const login = async () => {
-  try {
-    error.value = ''
-    const userCred = await signInWithEmailAndPassword(auth, email.value, password.value)
-    const idToken = await userCred.user.getIdToken()
-
-    await axios.post(
-      '/api/auth/sync',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      }
-    )
-
-    router.push('/todos')
-  } catch (err: any) {
-    error.value = err.message || 'Błąd podczas logowania'
-  }
 }
 </script>
 <template>
@@ -50,7 +29,7 @@ const login = async () => {
           Witaj z powrotem! Proszę podać swoje dane.
         </p>
       </div>
-      <form class="space-y-6" @submit.prevent="login">
+      <form class="space-y-6" @submit.prevent="accountStore.login(email, password)">
         <div>
           <label class="text-sm font-medium text-black/80 dark:text-white/80" for="email"
             >Email</label

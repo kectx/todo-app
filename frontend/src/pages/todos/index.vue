@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-import { getAuth } from 'firebase/auth'
+import { useAccountStore } from '../../store/account'
 
 interface Todo {
   _id: string
@@ -10,8 +10,7 @@ interface Todo {
   dueDate: string
 }
 
-const auth = getAuth()
-const user = auth.currentUser
+const accountStore = useAccountStore()
 
 const today = new Date().toISOString().split('T')[0]
 
@@ -43,12 +42,11 @@ const filteredTodos = computed(() => {
 })
 
 const fetchTodos = async () => {
-  if (!user) return
-  const token = await user.getIdToken()
+  if (!accountStore.token) return
 
   const res = await axios.get('/api/todos', {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accountStore.token}`,
     },
   })
 
@@ -56,14 +54,13 @@ const fetchTodos = async () => {
 }
 
 const addTodo = async () => {
-  if (!newTodo.value.trim() || !user) return
-  const token = await user.getIdToken()
+  if (!newTodo.value.trim() || !accountStore.token) return
   const res = await axios.post(
     '/api/todos',
     { text: newTodo.value, dueDate: today },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accountStore.token}`,
       },
     }
   )
@@ -72,25 +69,23 @@ const addTodo = async () => {
 }
 
 const toggleTodo = async (todo: Todo) => {
-  const token = await user?.getIdToken()
-  if (!token) return
+  if (!accountStore.token) return
   const res = await axios.put(
     `/api/todos/${todo._id}`,
     { done: !todo.done },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accountStore.token}`,
       },
     }
   )
   todo.done = res.data.done
 }
 const deleteTodo = async (id: string) => {
-  const token = await user?.getIdToken()
-  if (!token) return
+  if (!accountStore.token) return
   await axios.delete(`/api/todos/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accountStore.token}`,
     },
   })
   todos.value = todos.value.filter((t) => t._id !== id)
@@ -107,8 +102,7 @@ const editTodo = (id: string) => {
 }
 
 const saveEdit = async () => {
-  const token = await user?.getIdToken()
-  if (!editText.value.trim() || !editId.value || !token) return
+  if (!editText.value.trim() || !editId.value || !accountStore.token) return
   const res = await axios.put(
     `/api/todos/${editId.value}`,
     {
@@ -117,7 +111,7 @@ const saveEdit = async () => {
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accountStore.token}`,
       },
     }
   )
