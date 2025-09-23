@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { defineStore } from 'pinia'
 import { auth } from '../firebase/auth'
 import axios from 'axios'
@@ -47,6 +47,39 @@ export const useAccountStore = defineStore('account', {
         console.error('Login failed:', error)
         throw error
       }
+    },
+    async register(email: string, password: string) {
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password)
+        const idToken = await userCred.user.getIdToken()
+
+        await axios.post(
+          '/api/auth/sync',
+          {},
+          {
+            headers: { Authorization: `Bearer ${idToken}` },
+          }
+        )
+
+        this.setUser(
+          {
+            uid: userCred.user.uid,
+            email: userCred.user.email || '',
+            isLoggedIn: true,
+          },
+          idToken
+        )
+
+        router.push('/todos')
+      } catch (error) {
+        console.error('Registration failed:', error)
+        throw error
+      }
+    },
+    async logout() {
+      await auth.signOut()
+      this.setUser(null, '')
+      router.push('/login')
     },
   },
 })
