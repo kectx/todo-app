@@ -79,7 +79,7 @@ export const useAccountStore = defineStore('account', {
     async logout() {
       await auth.signOut()
       this.setUser(null, '')
-      router.push('/login')
+      router.push('/')
     },
   },
 })
