@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { useAccountStore } from '../../store/account'
-import axios from 'axios'
+import api from '../../plugins/axios'
 import { Todo } from '../../types/interfaces'
 import { ActiveDay } from '../../types/enum'
 
@@ -41,50 +41,26 @@ const filteredTodos = computed(() => {
 const fetchTodos = async () => {
   if (!accountStore.token) return
 
-  const res = await axios.get('/api/todos', {
-    headers: {
-      Authorization: `Bearer ${accountStore.token}`,
-    },
-  })
+  const res = await api.get('/api/todos')
 
   todos.value = Array.isArray(res.data) ? res.data : todos.value
 }
 
 const addTodo = async () => {
   if (!newTodo.value.trim() || !accountStore.token) return
-  const res = await axios.post(
-    '/api/todos',
-    { text: newTodo.value, dueDate: today },
-    {
-      headers: {
-        Authorization: `Bearer ${accountStore.token}`,
-      },
-    }
-  )
+  const res = await api.post('/api/todos', { text: newTodo.value, dueDate: today })
   todos.value.push(res.data)
   newTodo.value = ''
 }
 
 const toggleTodo = async (todo: Todo) => {
   if (!accountStore.token) return
-  const res = await axios.put(
-    `/api/todos/${todo._id}`,
-    { done: !todo.done },
-    {
-      headers: {
-        Authorization: `Bearer ${accountStore.token}`,
-      },
-    }
-  )
+  const res = await api.put(`/api/todos/${todo._id}`, { done: !todo.done })
   todo.done = res.data.done
 }
 const deleteTodo = async (id: string) => {
   if (!accountStore.token) return
-  await axios.delete(`/api/todos/${id}`, {
-    headers: {
-      Authorization: `Bearer ${accountStore.token}`,
-    },
-  })
+  await api.delete(`/api/todos/${id}`)
   todos.value = todos.value.filter((t) => t._id !== id)
 }
 
@@ -100,18 +76,10 @@ const editTodo = (id: string) => {
 
 const saveEdit = async () => {
   if (!editText.value.trim() || !editId.value || !accountStore.token) return
-  const res = await axios.put(
-    `/api/todos/${editId.value}`,
-    {
-      text: editText.value,
-      dueDate: editDate.value,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${accountStore.token}`,
-      },
-    }
-  )
+  const res = await api.put(`/api/todos/${editId.value}`, {
+    text: editText.value,
+    dueDate: editDate.value,
+  })
 
   const todo = todos.value.find((t) => t._id === editId.value)
   if (todo) {
