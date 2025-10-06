@@ -175,6 +175,7 @@ onMounted(async () => {
           class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800"
           type="checkbox"
           :checked="todo.done"
+          :disabled="activeTab === ActiveDay.PAST"
           @change="toggleTodo(todo)"
         />
         <div class="ml-4">
