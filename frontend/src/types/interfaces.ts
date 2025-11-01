@@ -9,8 +9,8 @@ export interface Todo {
 
 export interface CalendarDay {
   date: DateTime
-  dateString: string
-  isToday: boolean
+  dateString: string | null
+  isToday: boolean | undefined
   isPreviousDay: boolean
   todos: Todo[]
 }
