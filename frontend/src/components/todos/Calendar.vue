@@ -109,7 +109,7 @@ async function addTask() {
             disabled: day.isPreviousDay,
           },
         ]"
-        @click="openAddModal(day.dateString)"
+        @click="openAddModal(day.dateString || '')"
       >
         <div class="text-sm font-semibold">{{ day.date.day }}</div>
 
