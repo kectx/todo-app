@@ -65,6 +65,12 @@ export const useAccountStore = defineStore('account', {
       }
     },
     async logout() {
+      try {
+        await axios.delete('/api/auth/logout', { withCredentials: true })
+      } catch (error) {
+        console.warn('Logout request failed:', error)
+      }
+
       await auth.signOut()
       this.setUser(null, '')
       router.push('/')
