@@ -5,14 +5,19 @@ import dotenv from "dotenv";
 
 import todoRoutes from "./routes/todos.ts";
 import authRoutes from "./routes/auth.ts";
+import { sessionMiddleware } from "./session.ts";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  }));
 app.use(express.json());
+app.use(sessionMiddleware)
 
 app.use("/api/todos", todoRoutes);
 app.use("/api/auth", authRoutes);
