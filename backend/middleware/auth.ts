@@ -17,3 +17,11 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+export const requireSession = (req: Request, res: Response, next: NextFunction) => {
+  if (!(req.session as any).user) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  next();
+};
+
