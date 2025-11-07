@@ -39,8 +39,6 @@ const filteredTodos = computed(() => {
 })
 
 const fetchTodos = async () => {
-  if (!accountStore.token) return
-
   const res = await api.get('/api/todos')
 
   todos.value = Array.isArray(res.data) ? res.data : todos.value
@@ -54,12 +52,10 @@ const addTodo = async () => {
 }
 
 const toggleTodo = async (todo: Todo) => {
-  if (!accountStore.token) return
   const res = await api.put(`/api/todos/${todo._id}`, { done: !todo.done })
   todo.done = res.data.done
 }
 const deleteTodo = async (id: string) => {
-  if (!accountStore.token) return
   await api.delete(`/api/todos/${id}`)
   todos.value = todos.value.filter((t) => t._id !== id)
 }
@@ -75,7 +71,7 @@ const editTodo = (id: string) => {
 }
 
 const saveEdit = async () => {
-  if (!editText.value.trim() || !editId.value || !accountStore.token) return
+  if (!editText.value.trim() || !editId.value) return
   const res = await api.put(`/api/todos/${editId.value}`, {
     text: editText.value,
     dueDate: editDate.value,

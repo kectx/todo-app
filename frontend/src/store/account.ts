@@ -30,17 +30,11 @@ export const useAccountStore = defineStore('account', {
           {},
           {
             headers: { Authorization: `Bearer ${idToken}` },
+            withCredentials: true,
           }
         )
 
-        this.setUser(
-          {
-            uid: userCred.user.uid,
-            email: userCred.user.email || '',
-            isLoggedIn: true,
-          },
-          idToken
-        )
+        this.setUser({ uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true })
 
         router.push('/todos')
       } catch (error) {
@@ -58,17 +52,11 @@ export const useAccountStore = defineStore('account', {
           {},
           {
             headers: { Authorization: `Bearer ${idToken}` },
+            withCredentials: true,
           }
         )
 
-        this.setUser(
-          {
-            uid: userCred.user.uid,
-            email: userCred.user.email || '',
-            isLoggedIn: true,
-          },
-          idToken
-        )
+        this.setUser({ uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true })
 
         router.push('/todos')
       } catch (error) {
@@ -80,6 +68,14 @@ export const useAccountStore = defineStore('account', {
       await auth.signOut()
       this.setUser(null, '')
       router.push('/')
+    },
+    async restoreSession() {
+      try {
+        const res = await axios.get('/api/auth/me', { withCredentials: true })
+        this.setUser({ ...res.data, isLoggedIn: true })
+      } catch {
+        this.setUser(null)
+      }
     },
   },
 })
