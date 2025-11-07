@@ -26,4 +26,21 @@ router.get("/me", (req, res) => {
   res.json((req.session as any).user);
 });
 
+router.delete("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Session destroy error:", err);
+      return res.status(500).json({ error: "Logout failed" });
+    }
+
+    res.clearCookie("connect.sid", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+    });
+
+    res.json({ message: "Logged out" });
+  });
+});
+
 export default router;
