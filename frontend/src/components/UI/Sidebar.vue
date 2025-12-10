@@ -6,7 +6,6 @@ import TasksIcon from '@/assets/icons/tasks.svg'
 import CalendarIcon from '@/assets/icons/calendar.svg'
 import ListIcon from '@/assets/icons/list.svg'
 import BoardIcon from '@/assets/icons/board.svg'
-import ReportsIcon from '@/assets/icons/reports.svg'
 
 const menuDropdown = ref(false)
 
@@ -29,7 +28,6 @@ const navItems = [
   { key: 'calendar', label: 'Kalendarz', icon: CalendarIcon },
   { key: 'list', label: 'Lista', icon: ListIcon },
   { key: 'board', label: 'Tablica', icon: BoardIcon },
-  { key: 'reports', label: 'Raporty', icon: ReportsIcon },
 ]
 </script>
 

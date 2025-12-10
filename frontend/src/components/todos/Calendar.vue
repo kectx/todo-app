@@ -101,7 +101,7 @@ async function addTask() {
 
       <div
         v-for="day in daysInMonth"
-        :key="day.dateString"
+        :key="day.dateString || ''"
         :class="[
           'hover:bg-primary/10 relative min-h-[75px] cursor-pointer rounded-lg border p-2 transition',
           {
