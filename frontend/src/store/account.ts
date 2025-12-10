@@ -34,7 +34,10 @@ export const useAccountStore = defineStore('account', {
           }
         )
 
-        this.setUser({ uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true })
+        this.setUser(
+          { uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true },
+          idToken
+        )
 
         router.push('/todos')
       } catch (error) {
@@ -56,7 +59,10 @@ export const useAccountStore = defineStore('account', {
           }
         )
 
-        this.setUser({ uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true })
+        this.setUser(
+          { uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true },
+          idToken
+        )
 
         router.push('/todos')
       } catch (error) {

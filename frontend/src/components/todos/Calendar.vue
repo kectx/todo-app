@@ -38,7 +38,7 @@ const daysInMonth = computed<CalendarDay[]>(() => {
       dateString,
       isToday,
       isPreviousDay,
-      todos: todos.value.filter((t) => t.dueDate.startsWith(dateString ? dateString : '')),
+      todos: dateString ? todos.value.filter((t) => t.dueDate.startsWith(dateString)) : [],
     })
   }
 

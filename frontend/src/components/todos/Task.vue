@@ -45,7 +45,7 @@ const fetchTodos = async () => {
 }
 
 const addTodo = async () => {
-  if (!newTodo.value.trim() || !accountStore.token) return
+  if (!newTodo.value.trim()) return
   const res = await api.post('/api/todos', { text: newTodo.value, dueDate: today })
   todos.value.push(res.data)
   newTodo.value = ''
