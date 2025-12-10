@@ -7,7 +7,7 @@ const todoSchema = new mongoose.Schema({
     type: Date,
     required: false
   },
-  userId: { type: String, required: true } 
+  userId: { type: String, required: true, select: false } 
 }, { timestamps: true });
 
 export default mongoose.model("Todo", todoSchema);
