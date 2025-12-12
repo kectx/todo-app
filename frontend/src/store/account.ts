@@ -11,6 +11,8 @@ import { router } from '../router'
 interface User {
   uid: string
   email: string
+  username?: string | null
+  avatar?: string | null
   isLoggedIn?: boolean
 }
 
@@ -38,10 +40,8 @@ export const useAccountStore = defineStore('account', {
           }
         )
 
-        this.setUser(
-          { uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true },
-          idToken
-        )
+        const userRes = await axios.get('/api/auth/me', { withCredentials: true })
+        this.setUser({ ...userRes.data, isLoggedIn: true }, idToken)
 
         router.push('/todos')
       } catch (error) {
@@ -63,10 +63,8 @@ export const useAccountStore = defineStore('account', {
           }
         )
 
-        this.setUser(
-          { uid: userCred.user.uid, email: userCred.user.email!, isLoggedIn: true },
-          idToken
-        )
+        const userRes = await axios.get('/api/auth/me', { withCredentials: true })
+        this.setUser({ ...userRes.data, isLoggedIn: true }, idToken)
 
         router.push('/todos')
       } catch (error) {
@@ -91,6 +89,20 @@ export const useAccountStore = defineStore('account', {
         this.setUser({ ...res.data, isLoggedIn: true })
       } catch {
         this.setUser(null)
+      }
+    },
+    async updateProfile(username?: string, avatar?: string | null | undefined) {
+      try {
+        const payload: any = {}
+        if (username !== undefined) payload.username = username || null
+        if (avatar !== undefined) payload.avatar = avatar || null
+
+        const res = await axios.put('/api/auth/profile', payload, { withCredentials: true })
+        this.setUser({ ...res.data, isLoggedIn: true }, this.token)
+        return res.data
+      } catch (error: any) {
+        console.error('Update profile failed:', error)
+        throw error
       }
     },
     async sendPasswordReset(email: string) {

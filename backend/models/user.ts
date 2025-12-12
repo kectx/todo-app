@@ -11,6 +11,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    username: {
+      type: String,
+      required: false,
+      trim: true,
+      maxlength: 30,
+    },
+    avatar: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
