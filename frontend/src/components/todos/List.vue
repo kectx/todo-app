@@ -43,7 +43,7 @@ const displayedGroups = computed(() => {
 })
 
 const hasMoreGroups = computed(() => {
-  return groupedTodos.value.length > 4
+  return groupedTodos.value.length > 3
 })
 
 const toggleExpand = () => {

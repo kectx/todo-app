@@ -160,7 +160,7 @@ async function addTask() {
             {{ todo.text }}
           </div>
           <button
-            v-if="day.todos.length > 3"
+            v-if="day.todos.length > 2"
             @click="toggleExpand(day.dateString, $event)"
             class="w-full text-xs transition-colors"
             :class="[
