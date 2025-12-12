@@ -141,7 +141,10 @@ async function saveProfile() {
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
     @click.self="showEditModal = false"
   >
-    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800" @click.stop>
+    <div
+      class="w-[90vw] max-w-md rounded-lg bg-white p-4 shadow-xl sm:p-6 dark:bg-gray-800"
+      @click.stop
+    >
       <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Edytuj profil</h3>
 
       <div
@@ -156,8 +159,8 @@ async function saveProfile() {
           <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Avatar (max 48x48px, 50KB)
           </label>
-          <div class="flex items-center gap-4">
-            <div class="relative">
+          <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            <div class="relative shrink-0">
               <img
                 :src="editAvatar || defaultAvatar"
                 alt="Preview"
@@ -169,7 +172,7 @@ async function saveProfile() {
                 "
               />
             </div>
-            <div class="flex-1 space-y-2">
+            <div class="w-full space-y-2 sm:flex-1">
               <label
                 class="flex cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               >

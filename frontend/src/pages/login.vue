@@ -47,8 +47,8 @@ const forgotPassword = async () => {
 }
 </script>
 <template>
-  <main class="flex flex-grow items-center justify-center">
-    <div class="dark:bg-primary-dark w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-2xl">
+  <main class="flex flex-grow items-center justify-center p-4">
+    <div class="dark:bg-primary-dark w-full max-w-md space-y-6 rounded-xl bg-white p-6 shadow-2xl sm:space-y-8 sm:p-8">
       <div class="text-center">
         <h2 class="text-3xl font-bold text-black/90 dark:text-white/90">Zaloguj się</h2>
         <p class="mt-2 text-sm text-black/60 dark:text-white/60">

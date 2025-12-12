@@ -159,12 +159,12 @@ onMounted(fetchTodos)
 </script>
 
 <template>
-  <div class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Tablica zadań</h2>
+  <div class="space-y-4 pb-6 sm:space-y-6 sm:pb-8">
+    <header class="mt-16 lg:mt-0">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Tablica zadań</h2>
     </header>
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <div
         v-for="column in boardColumns"
         :key="column.id"
@@ -251,7 +251,7 @@ onMounted(fetchTodos)
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       @click.self="editDialog = false"
     >
-      <div class="w-96 rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800" @click.stop>
+      <div class="w-[90vw] max-w-md rounded-lg bg-white p-4 shadow-xl sm:w-96 sm:p-6 dark:bg-gray-800" @click.stop>
         <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-white">Edytuj zadanie</h3>
         <input
           v-model="editText"

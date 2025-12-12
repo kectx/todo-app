@@ -14,9 +14,9 @@ const changeTab = (tab: string) => {
 </script>
 
 <template>
-  <div class="flex">
+  <div class="flex min-h-screen">
     <Sidebar @tabChange="changeTab" />
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
       <Task v-if="currentTab === 'tasks'" />
       <Calendar v-if="currentTab === 'calendar'" />
       <List v-if="currentTab === 'list'" />
@@ -24,3 +24,4 @@ const changeTab = (tab: string) => {
     </main>
   </div>
 </template>
+

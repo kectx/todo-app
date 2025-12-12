@@ -9,22 +9,24 @@ const goToLogin = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <div class="flex flex-col items-center justify-center p-4">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <div class="flex flex-col items-center justify-center p-4 sm:p-6">
       <div class="w-full max-w-md text-center">
-        <h1 class="mb-4 text-4xl font-bold text-slate-800 dark:text-white">
+        <h1 class="mb-4 text-3xl font-bold text-slate-800 dark:text-white sm:text-4xl">
           Zorganizuj swoje zadania
         </h1>
-        <p class="mb-8 text-slate-600 dark:text-slate-300">
+        <p class="mb-6 text-base text-slate-600 dark:text-slate-300 sm:mb-8 sm:text-lg">
           Zacznij zarządzać swoimi zadaniami w prosty i efektywny sposób.
         </p>
         <button
-          class="bg-primary hover:bg-primary/90 mb-4 w-full animate-pulse rounded-lg px-6 py-3 font-bold text-white transition-colors duration-300 hover:animate-none"
+          class="bg-primary hover:bg-primary/90 mb-4 w-full animate-pulse rounded-lg px-6 py-3 text-base font-bold text-white transition-colors duration-300 hover:animate-none sm:text-lg"
           @click="goToLogin"
         >
           Rozpocznij
         </button>
-        <p class="text-primary hover:underline" @click="goToLogin">Masz już konto? Zaloguj się</p>
+        <p class="text-sm text-primary hover:underline cursor-pointer sm:text-base" @click="goToLogin">
+          Masz już konto? Zaloguj się
+        </p>
       </div>
     </div>
   </div>

@@ -63,9 +63,9 @@ onMounted(fetchTodos)
 </script>
 
 <template>
-  <div class="space-y-8">
-    <header class="flex items-center justify-between">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Lista zadań</h2>
+  <div class="space-y-6 pb-6 sm:space-y-8 sm:pb-8">
+    <header class="mt-16 lg:mt-0">
+      <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">Lista zadań</h2>
     </header>
 
     <template v-for="(group, groupIndex) in displayedGroups" :key="group.date">
@@ -90,7 +90,7 @@ onMounted(fetchTodos)
           ></div>
         </div>
 
-        <div class="grid gap-3 sm:grid-cols-1 lg:grid-cols-2">
+        <div class="grid gap-3 sm:grid-cols-1 md:grid-cols-2">
           <div
             v-for="todo in group.todos"
             :key="todo._id"

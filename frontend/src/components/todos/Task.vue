@@ -112,25 +112,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="mb-8 flex items-center justify-between">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Moje zadania</h2>
-    <form @submit.prevent="addTodo" class="flex gap-2">
+  <header class="mb-6 mt-16 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between lg:mt-0">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Moje zadania</h2>
+    <form @submit.prevent="addTodo" class="flex flex-col gap-2 sm:flex-row sm:items-center">
       <input
         v-model="newTodo"
         type="text"
         placeholder="Nowe zadanie..."
-        class="rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        class="flex-1 rounded-lg border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
       />
       <button
         type="submit"
-        class="bg-primary hover:bg-primary/90 rounded-lg px-6 py-2 font-semibold text-white shadow-md transition-colors"
+        class="bg-primary hover:bg-primary/90 rounded-lg px-4 py-2 font-semibold text-white shadow-md transition-colors sm:px-6"
       >
         Dodaj
       </button>
     </form>
   </header>
 
-  <div class="mb-6 flex gap-4 border-b border-gray-200 dark:border-gray-700">
+  <div class="mb-6 flex flex-wrap gap-3 border-b border-gray-200 sm:gap-4 dark:border-gray-700">
     <button
       @click="activeTab = ActiveDay.TODAY"
       :class="[
@@ -177,42 +177,42 @@ onMounted(async () => {
     </button>
   </div>
 
-  <div class="space-y-4">
+  <div class="space-y-4 pb-6 sm:pb-8">
     <div
       v-for="todo in filteredTodos"
       :key="todo._id"
-      class="dark:bg-primary-dark flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700"
+      class="dark:bg-primary-dark flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700"
     >
-      <div class="flex items-center">
+      <div class="flex items-center gap-3 sm:flex-1">
         <input
-          class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800"
+          class="text-primary focus:ring-primary h-5 w-5 shrink-0 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800"
           type="checkbox"
           :checked="todo.done"
           :disabled="activeTab === ActiveDay.PAST"
           @change="toggleTodo(todo)"
         />
-        <div class="ml-4">
+        <div class="min-w-0 flex-1">
           <p
             :class="[
-              'font-medium',
+              'font-medium break-words',
               todo.done ? 'text-gray-400 line-through' : 'text-gray-900 dark:text-white',
             ]"
           >
             {{ todo.text }}
           </p>
-          <p class="text-xs text-gray-400">Termin: {{ formatDate(todo.dueDate) }}</p>
+          <p class="mt-1 text-xs text-gray-400">Termin: {{ formatDate(todo.dueDate) }}</p>
         </div>
       </div>
-      <div class="flex gap-2">
+      <div class="flex gap-2 sm:shrink-0">
         <button
           @click="editTodo(todo._id)"
-          class="text-primary/100 hover:bg-primary dark:hover:bg-primary/30 rounded px-3 py-1 text-sm"
+          class="text-primary/100 hover:bg-primary dark:hover:bg-primary/30 rounded px-3 py-1 text-sm transition-colors"
         >
           Edytuj
         </button>
         <button
           @click="deleteTodo(todo._id)"
-          class="rounded px-3 py-1 text-sm text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+          class="rounded px-3 py-1 text-sm text-red-500 transition-colors hover:bg-red-100 dark:hover:bg-red-900/30"
         >
           Usuń
         </button>
@@ -222,8 +222,8 @@ onMounted(async () => {
   <div v-if="filteredTodos.length === 0" class="mt-8 text-center text-gray-500 dark:text-gray-400">
     Brak zadań do wyświetlenia.
   </div>
-  <div v-if="editDialog" class="fixed inset-0 flex items-center justify-center bg-black/30">
-    <div class="w-96 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+  <div v-if="editDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-4 shadow-lg sm:p-6 dark:bg-gray-800">
       <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-white">Edytuj zadanie</h3>
       <input
         v-model="editText"
