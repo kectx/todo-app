@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from 'firebase/auth'
 import { defineStore } from 'pinia'
 import { auth } from '../firebase/auth'
 import axios from 'axios'
@@ -87,6 +91,22 @@ export const useAccountStore = defineStore('account', {
         this.setUser({ ...res.data, isLoggedIn: true })
       } catch {
         this.setUser(null)
+      }
+    },
+    async sendPasswordReset(email: string) {
+      if (!email || !email.trim()) {
+        throw new Error('Email jest wymagany')
+      }
+      try {
+        await sendPasswordResetEmail(auth, email)
+      } catch (error: any) {
+        if (error.code === 'auth/user-not-found') {
+          throw new Error('Użytkownik o podanym adresie email nie istnieje')
+        } else if (error.code === 'auth/invalid-email') {
+          throw new Error('Nieprawidłowy adres email')
+        } else {
+          throw new Error('Wystąpił błąd podczas wysyłania emaila')
+        }
       }
     },
   },

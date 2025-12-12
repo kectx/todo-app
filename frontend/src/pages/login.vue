@@ -7,6 +7,8 @@ const router = useRouter()
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
+const isLoading = ref(false)
 
 const accountStore = useAccountStore()
 
@@ -14,8 +16,34 @@ const goToRegister = () => {
   router.push('/register')
 }
 
-const forgotPassword = () => {
-  // Implement forgot password logic here
+const handleLogin = async () => {
+  errorMessage.value = ''
+  if (!email.value.trim() || !password.value.trim()) {
+    errorMessage.value = 'Proszę wypełnić wszystkie pola'
+    return
+  }
+  isLoading.value = true
+  try {
+    await accountStore.login(email.value, password.value)
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Nieprawidłowy email lub hasło'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const forgotPassword = async () => {
+  if (!email.value.trim()) {
+    errorMessage.value = 'Proszę podać adres email'
+    return
+  }
+  try {
+    await accountStore.sendPasswordReset(email.value)
+    alert('Email z instrukcją resetowania hasła został wysłany')
+    errorMessage.value = ''
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Wystąpił błąd podczas wysyłania emaila'
+  }
 }
 </script>
 <template>
@@ -27,7 +55,13 @@ const forgotPassword = () => {
           Witaj z powrotem! Proszę podać swoje dane.
         </p>
       </div>
-      <form class="space-y-6" @submit.prevent="accountStore.login(email, password)">
+      <form class="space-y-6" @submit.prevent="handleLogin">
+        <div
+          v-if="errorMessage"
+          class="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400"
+        >
+          {{ errorMessage }}
+        </div>
         <div>
           <label class="text-sm font-medium text-black/80 dark:text-white/80" for="email"
             >Email</label
@@ -65,10 +99,11 @@ const forgotPassword = () => {
         </div>
         <div>
           <button
-            class="focus:ring-offset-background-light dark:focus:ring-offset-background-dark bg-primary hover:bg-primary/90 focus:ring-primary flex w-full justify-center rounded-lg border border-transparent px-4 py-3 text-sm font-medium text-white shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            :disabled="isLoading"
+            class="focus:ring-offset-background-light dark:focus:ring-offset-background-dark bg-primary hover:bg-primary/90 focus:ring-primary flex w-full justify-center rounded-lg border border-transparent px-4 py-3 text-sm font-medium text-white shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             type="submit"
           >
-            Zaloguj się
+            {{ isLoading ? 'Logowanie...' : 'Zaloguj się' }}
           </button>
         </div>
       </form>

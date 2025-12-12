@@ -27,6 +27,15 @@ const daysInMonth = computed<CalendarDay[]>(() => {
   const end = start.endOf('month')
   const days: CalendarDay[] = []
 
+  const todosByDate = new Map<string, Todo[]>()
+  todos.value.forEach((todo) => {
+    const dateKey = todo.dueDate.split('T')[0]
+    if (!todosByDate.has(dateKey)) {
+      todosByDate.set(dateKey, [])
+    }
+    todosByDate.get(dateKey)!.push(todo)
+  })
+
   for (let i = 1; i <= end.day; i++) {
     const date = DateTime.local(currentYear.value, currentMonth.value, i)
     const dateString = date.toISODate()
@@ -38,7 +47,7 @@ const daysInMonth = computed<CalendarDay[]>(() => {
       dateString,
       isToday,
       isPreviousDay,
-      todos: dateString ? todos.value.filter((t) => t.dueDate.startsWith(dateString)) : [],
+      todos: todosByDate.get(dateString || '') || [],
     })
   }
 
@@ -60,6 +69,7 @@ function nextMonth() {
 const showAddModal = ref(false)
 const selectedDate = ref<string | null>(null)
 const newTaskText = ref('')
+const expandedDates = ref<Set<string>>(new Set())
 
 function openAddModal(date: string) {
   selectedDate.value = date
@@ -67,19 +77,40 @@ function openAddModal(date: string) {
   showAddModal.value = true
 }
 
+function toggleExpand(date: string | null, event: Event) {
+  if (!date) return
+  event.stopPropagation()
+  if (expandedDates.value.has(date)) {
+    expandedDates.value.delete(date)
+  } else {
+    expandedDates.value.add(date)
+  }
+}
+
+function isExpanded(date: string | null): boolean {
+  return date ? expandedDates.value.has(date) : false
+}
+
 async function addTask() {
-  if (!newTaskText.value.trim() || !selectedDate.value) return
+  const trimmedText = newTaskText.value.trim()
+  if (!trimmedText || !selectedDate.value) return
+  if (trimmedText.length > 1000) {
+    alert('Tekst zadania nie może przekraczać 1000 znaków')
+    return
+  }
   try {
     const res = await api.post('/api/todos', {
-      text: newTaskText.value.trim(),
+      text: trimmedText,
       dueDate: selectedDate.value,
       done: false,
     })
     if (res.status !== 201) throw new Error('Nie udało się dodać zadania')
-    await fetchTodos()
+    todos.value.push(res.data)
     showAddModal.value = false
-  } catch (e) {
-    console.error(e)
+    newTaskText.value = ''
+  } catch (e: any) {
+    console.error('Błąd podczas dodawania zadania:', e)
+    alert(e.response?.data?.error || 'Nie udało się dodać zadania')
   }
 }
 </script>
@@ -103,20 +134,21 @@ async function addTask() {
         v-for="day in daysInMonth"
         :key="day.dateString || ''"
         :class="[
-          'hover:bg-primary/10 relative min-h-[75px] cursor-pointer rounded-lg border p-2 transition',
+          'hover:bg-primary/10 relative rounded-lg border p-2 transition',
           {
             'bg-primary border-primary text-white': day.isToday,
             disabled: day.isPreviousDay,
+            'min-h-[75px]': !isExpanded(day.dateString) || day.todos.length <= 3,
           },
         ]"
-        @click="openAddModal(day.dateString || '')"
       >
         <div class="text-sm font-semibold">{{ day.date.day }}</div>
 
         <div v-if="day.todos.length" class="mt-1 space-y-1">
           <div
-            v-for="todo in day.todos.slice(0, 2)"
+            v-for="todo in isExpanded(day.dateString) ? day.todos : day.todos.slice(0, 2)"
             :key="todo._id"
+            @click.stop
             :class="[
               'bg-primary/20 text-primary truncate rounded px-1 text-xs',
               {
@@ -127,8 +159,34 @@ async function addTask() {
           >
             {{ todo.text }}
           </div>
-          <div v-if="day.todos.length > 2" class="text-xs text-gray-500">
-            +{{ day.todos.length - 2 }}...
+          <button
+            v-if="day.todos.length > 3"
+            @click="toggleExpand(day.dateString, $event)"
+            class="w-full text-xs transition-colors"
+            :class="[
+              day.isToday ? 'text-white/80 hover:text-white' : 'text-primary hover:text-primary/80',
+            ]"
+          >
+            {{ isExpanded(day.dateString) ? '🔼 Zwiń' : `+${day.todos.length - 2} więcej...` }}
+          </button>
+        </div>
+
+        <div
+          v-if="!day.isPreviousDay"
+          @click.stop="openAddModal(day.dateString || '')"
+          class="flex cursor-pointer items-center justify-center transition-colors"
+          :class="[
+            day.todos.length === 0 ? 'absolute inset-0 mt-6' : 'mt-2 flex justify-center',
+            day.isToday ? 'text-white/80 hover:text-white' : 'text-primary hover:text-primary/80',
+          ]"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-full transition-colors"
+            :class="[
+              day.isToday ? 'bg-white/20 hover:bg-white/30' : 'bg-primary/10 hover:bg-primary/20',
+            ]"
+          >
+            <span class="text-sm font-bold">+</span>
           </div>
         </div>
       </div>

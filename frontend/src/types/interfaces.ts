@@ -14,3 +14,16 @@ export interface CalendarDay {
   isPreviousDay: boolean
   todos: Todo[]
 }
+
+export interface BoardColumn {
+  id: string
+  title: string
+  todos: Todo[]
+  color: string
+  bgColor: string
+}
+
+export interface GroupedTodo {
+  date: string
+  todos: Todo[]
+}

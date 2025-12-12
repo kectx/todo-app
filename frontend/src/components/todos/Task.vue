@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
-import { useAccountStore } from '../../store/account'
 import api from '../../plugins/axios'
 import { Todo } from '../../types/interfaces'
 import { ActiveDay } from '../../types/enum'
-
-const accountStore = useAccountStore()
 
 const today = new Date().toISOString().split('T')[0]
 
@@ -45,10 +42,20 @@ const fetchTodos = async () => {
 }
 
 const addTodo = async () => {
-  if (!newTodo.value.trim()) return
-  const res = await api.post('/api/todos', { text: newTodo.value, dueDate: today })
-  todos.value.push(res.data)
-  newTodo.value = ''
+  const trimmedText = newTodo.value.trim()
+  if (!trimmedText) return
+  if (trimmedText.length > 1000) {
+    alert('Tekst zadania nie może przekraczać 1000 znaków')
+    return
+  }
+  try {
+    const res = await api.post('/api/todos', { text: trimmedText, dueDate: today })
+    todos.value.push(res.data)
+    newTodo.value = ''
+  } catch (error: any) {
+    console.error('Błąd podczas dodawania zadania:', error)
+    alert(error.response?.data?.error || 'Nie udało się dodać zadania')
+  }
 }
 
 const toggleTodo = async (todo: Todo) => {
@@ -71,22 +78,32 @@ const editTodo = (id: string) => {
 }
 
 const saveEdit = async () => {
-  if (!editText.value.trim() || !editId.value) return
-  const res = await api.put(`/api/todos/${editId.value}`, {
-    text: editText.value,
-    dueDate: editDate.value,
-  })
-
-  const todo = todos.value.find((t) => t._id === editId.value)
-  if (todo) {
-    todo.text = res.data.text
-    todo.dueDate = res.data.dueDate
+  const trimmedText = editText.value.trim()
+  if (!trimmedText || !editId.value) return
+  if (trimmedText.length > 1000) {
+    alert('Tekst zadania nie może przekraczać 1000 znaków')
+    return
   }
+  try {
+    const res = await api.put(`/api/todos/${editId.value}`, {
+      text: trimmedText,
+      dueDate: editDate.value,
+    })
 
-  editDialog.value = false
-  editText.value = ''
-  editDate.value = ''
-  editId.value = ''
+    const todo = todos.value.find((t) => t._id === editId.value)
+    if (todo) {
+      todo.text = res.data.text
+      todo.dueDate = res.data.dueDate
+    }
+
+    editDialog.value = false
+    editText.value = ''
+    editDate.value = today
+    editId.value = ''
+  } catch (error: any) {
+    console.error('Błąd podczas edycji zadania:', error)
+    alert(error.response?.data?.error || 'Nie udało się zaktualizować zadania')
+  }
 }
 
 onMounted(async () => {
