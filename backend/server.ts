@@ -1,16 +1,16 @@
 import express from "express";
-import mongoose from "mongoose";
+import * as mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 
-import todoRoutes from "./routes/todos.ts";
-import authRoutes from "./routes/auth.ts";
-import { sessionMiddleware } from "./session.ts";
+import todoRoutes from "./routes/todos.js";
+import authRoutes from "./routes/auth.js";
+import { sessionMiddleware } from "./session.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors({
     origin: "http://localhost:8080",

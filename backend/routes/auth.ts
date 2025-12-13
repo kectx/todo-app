@@ -1,6 +1,6 @@
 import express from "express";
-import { verifyToken, requireSession } from "../middleware/auth.ts";
-import User from "../models/user.ts";
+import { verifyToken, requireSession } from "../middleware/auth.js";
+import User, { UserDoc } from "../models/user.js"
 
 const router = express.Router();
 
@@ -8,12 +8,12 @@ router.post("/sync", verifyToken, async (req, res) => {
   try {
     const firebaseUser = (req as any).user;
 
-    let user = await User.findOne({ uid: firebaseUser.uid });
+    let user: UserDoc | null = await User.findOne({ uid: firebaseUser.uid });
     if (!user) {
       user = await User.create({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
-      });
+      }) as UserDoc;
     }
     (req.session as any).user = {
       uid: user.uid,

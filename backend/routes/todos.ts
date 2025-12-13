@@ -1,7 +1,6 @@
 import express from "express";
-import Todo from "../models/todo.ts";
-import { requireSession } from "../middleware/auth.ts";
-import "../types/express.d.ts";
+import Todo from "../models/todo.js";
+import { requireSession } from "../middleware/auth.js";
 
 const router = express.Router();
 

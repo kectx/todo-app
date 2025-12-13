@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { InferSchemaType, model, Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     uid: {
       type: String,
@@ -25,4 +25,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("User", userSchema);
+export type UserDoc = InferSchemaType<typeof userSchema>;
+
+const User = model<UserDoc>("User", userSchema);
+export default User;
