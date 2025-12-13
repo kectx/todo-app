@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { auth } from "../firebase.js";
+import admin from "../firebase.js";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -9,7 +9,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
   const token = authHeader.split(" ")[1];
   try {
-    const decoded = await auth.verifyIdToken(token);
+    const decoded = await admin.auth().verifyIdToken(token);
     (req as any).user = decoded;
     next();
   } catch (error) {
