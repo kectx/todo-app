@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: "http://localhost:8080",
+    origin: process.env.FRONTEND_URL || "http://localhost:8080",
     credentials: true,
   }));
 app.use(express.json());
@@ -27,6 +27,6 @@ const uri = `mongodb+srv://${process.env.MONGO_TODO_USER}:${encodeURIComponent(p
 mongoose.connect(uri)
   .then(() => {
     console.log("✅ MongoDB connected");
-    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+    app.listen(PORT);
   })
   .catch(err => console.error("❌ MongoDB connection error:", err));
