@@ -32,7 +32,3 @@ mongoose.connect(uri)
     app.listen(PORT);
   })
   .catch(err => console.error("❌ MongoDB connection error:", err));
-
-mongoose.connection.on("connected", () => {
-  console.log("Connected DB:", mongoose.connection.name);
-});
