@@ -22,7 +22,7 @@ app.use(sessionMiddleware)
 app.use("/api/todos", todoRoutes);
 app.use("/api/auth", authRoutes);
 
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${encodeURIComponent(process.env.MONGO_PASSWORD as string)}@todoapp.gn2y6mx.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=todoApp`;
+const uri = `mongodb+srv://${process.env.MONGO_TODO_USER}:${encodeURIComponent(process.env.MONGO_TODO_PASSWORD as string)}@todoapp.gn2y6mx.mongodb.net/${process.env.MONGO_DB}?appName=todoApp`;
 
 mongoose.connect(uri)
   .then(() => {
