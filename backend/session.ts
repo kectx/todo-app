@@ -8,7 +8,7 @@ export const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${encodeURIComponent(process.env.MONGO_PASSWORD as string)}@todoapp.gn2y6mx.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=todoApp`,
+    mongoUrl: `mongodb+srv://${process.env.MONGO_TODO_USER}:${encodeURIComponent(process.env.MONGO_TODO_PASSWORD as string)}@todoapp.gn2y6mx.mongodb.net/?appName=todoApp&retryWrites=true&w=majority`,
     ttl: 60 * 60 * 24 * 7,
   }),
   cookie: {
