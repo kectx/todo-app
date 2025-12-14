@@ -24,7 +24,7 @@ app.use("/api/auth", authRoutes);
 
 const uri = `mongodb+srv://${process.env.MONGO_TODO_USER}:${encodeURIComponent(
   process.env.MONGO_TODO_PASSWORD as string
-)}@todoapp.gn2y6mx.mongodb.net/todo_app?retryWrites=true&w=majority`;
+)}@todoapp.gn2y6mx.mongodb.net/?appName=todoApp&retryWrites=true&w=majority`;
 
 mongoose.connect(uri)
   .then(() => {
