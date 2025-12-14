@@ -5,7 +5,7 @@ import {
 } from 'firebase/auth'
 import { defineStore } from 'pinia'
 import { auth } from '../firebase/auth'
-import axios from 'axios'
+import axios from '../plugins/axios'
 import { router } from '../router'
 
 interface User {
