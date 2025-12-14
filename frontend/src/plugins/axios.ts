@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAccountStore } from '../store/account'
 
 const api = axios.create({
-  baseURL: '/',
+  baseURL: import.meta.env.VITE_BACKEND_URL || '/',
   withCredentials: true,
 })
 
