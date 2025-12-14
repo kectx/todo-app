@@ -1,8 +1,12 @@
 import axios from 'axios'
 import { useAccountStore } from '../store/account'
 
+if (!import.meta.env.VITE_BACKEND_URL) {
+  throw new Error('VITE_BACKEND_URL is not defined')
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || '/',
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 })
 
