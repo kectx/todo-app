@@ -2,16 +2,10 @@ import express from "express";
 import * as mongoose from "mongoose";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-import { existsSync, readFileSync } from "fs";
 
 import todoRoutes from "./routes/todos.js";
 import authRoutes from "./routes/auth.js";
 import { sessionMiddleware } from "./session.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 dotenv.config();
 
@@ -28,32 +22,6 @@ app.use(sessionMiddleware)
 
 app.use("/api/todos", todoRoutes);
 app.use("/api/auth", authRoutes);
-
-const frontendDistPath = join(__dirname, "../frontend/dist");
-if (existsSync(frontendDistPath)) {
-  app.use(express.static(frontendDistPath));
-}
-
-app.use("/api/*", (req, res) => {
-  res.status(404).json({ error: "API endpoint not found" });
-});
-
-app.get("*", (req, res) => {
-  if (req.path.startsWith("/api")) {
-    return res.status(404).json({ error: "API endpoint not found" });
-  }
-  
-  const indexPath = join(frontendDistPath, "index.html");
-  if (existsSync(indexPath)) {
-    const indexHtml = readFileSync(indexPath, "utf-8");
-    return res.send(indexHtml);
-  }
-  
-  res.status(404).json({ 
-    error: "Route not found",
-    message: "This is an API server. Please access the frontend application."
-  });
-});
 
 const uri = `mongodb+srv://${process.env.MONGO_TODO_USER}:${encodeURIComponent(
   process.env.MONGO_TODO_PASSWORD as string
